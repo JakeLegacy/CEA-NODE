@@ -1,0 +1,315 @@
+<%
+var adminLinks = [
+  { href: '/admin', label: 'Inicio', active: false },
+  { href: '/works/admin', label: 'Obras', active: false },
+  { href: '/scores/puntuacion', label: 'Puntuación de Obras', active: true },
+  { href: '/admin/panel', label: 'Admin-Panel', active: false }
+];
+function formatPct(val) {
+  if (val === null || val === undefined || val === '') return '—';
+  var f = parseFloat(val);
+  if (isNaN(f)) return val;
+  return (Math.floor(f) === f ? f.toFixed(0) : f.toFixed(1)) + '%';
+}
+var qsBase = search ? '&q=' + encodeURIComponent(search) : '';
+%>
+<%- include('../partials/head', { title: 'Puntuación de Obras', extraCss: ['obrasadmin.css'], bodyClass: 'obras-admin' }) %>
+<%- include('../partials/navbar', { navHome: '/admin', navTitle: 'Sistema de Gestión de Obras Hídricas – PUNTUACIÓN OBRAS', navLinks: adminLinks }) %>
+
+<div class="container-narrow">
+  <%- include('../partials/flash') %>
+
+  <form method="get" class="toolbar">
+    <div class="row">
+      <div class="col-sm-7">
+        <div class="input-group input-group-lg">
+          <input type="text" name="q" class="form-control" placeholder="Buscar por ID de obra o nombre de obra" value="<%= search %>">
+          <span class="input-group-btn">
+            <button type="submit" class="btn btn-primary">
+              <span class="glyphicon glyphicon-search"></span> Buscar
+            </button>
+          </span>
+        </div>
+      </div>
+      <div class="col-sm-5 text-right" style="margin-top:8px;">
+        <a href="/scores/ponderacion" class="btn btn-default btn-lg">Ponderación</a>
+        <a href="/scores/editar-calificacion" class="btn btn-default btn-lg">Editar Calificaciones</a>
+        <a href="/scores/puntuacion" class="btn btn-default btn-lg">Limpiar</a>
+      </div>
+    </div>
+  </form>
+
+  <!-- TABLA TOTAL -->
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-default">
+        <div class="panel-heading" style="background-color:#aeaeae">
+          <strong>Puntuación de Obras TOTAL (por obra)</strong>
+          <span class="pull-right">Página <%= page %> de <%= totalPages %></span>
+        </div>
+        <div class="table-scroll">
+          <table class="table table-striped table-hover table-compact table-fixed" style="min-width:1000px;">
+            <thead>
+              <tr>
+                <th class="wrap">ID Obra</th><th class="wrap">Nombre de Obra</th>
+                <th class="wrap">Técnico %</th><th class="wrap">Social %</th>
+                <th class="wrap">Ambiental %</th><th class="wrap">Político %</th>
+                <th class="wrap">Jurídico %</th><th class="wrap">Socioeconómico %</th>
+                <th class="wrap">Total (suma) %</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (rowsTotal.length > 0) { %>
+                <% rowsTotal.forEach(function(r) { %>
+                <tr>
+                  <td><%= r.id_work %></td>
+                  <td class="wrap"><%= r.name_project || '' %></td>
+                  <td><%= formatPct(r.pct_tecnic) %></td>
+                  <td><%= formatPct(r.pct_social) %></td>
+                  <td><%= formatPct(r.pct_environment) %></td>
+                  <td><%= formatPct(r.pct_politic) %></td>
+                  <td><%= formatPct(r.pct_legal) %></td>
+                  <td><%= formatPct(r.pct_socio) %></td>
+                  <td><%= formatPct(r.pct_sum) %></td>
+                </tr>
+                <% }); %>
+              <% } else { %>
+                <tr><td colspan="9" class="text-muted text-center">Sin resultados.</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLA TÉCNICO -->
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-default">
+        <div class="panel-heading" style="background-color:#58b7ff">
+          <strong>Puntuación de Obras Técnico</strong>
+          <span class="pull-right">Página <%= page %> de <%= totalPages %></span>
+        </div>
+        <div class="table-scroll">
+          <table class="table table-striped table-hover table-compact table-fixed" style="min-width:1000px;">
+            <thead>
+              <tr>
+                <th class="wrap">ID Puntuación</th><th class="wrap">ID Obra</th><th class="wrap">Nombre de Obra</th>
+                <th class="wrap">Importancia de la Obra</th><th class="wrap">Caudal Recuperado</th><th class="wrap">Problemática Actual</th>
+                <th class="wrap">Importancia %</th><th class="wrap">Caudal %</th><th class="wrap">Problemática %</th><th class="wrap">Total %</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (rowsTec.length > 0) { rowsTec.forEach(function(r) { %>
+              <tr>
+                <td><%= r.id_tecnic %></td><td><%= r.id_work %></td><td class="wrap"><%= r.name_project || '' %></td>
+                <td><%= r.work_importance %></td><td><%= r.caudal_recover %></td><td><%= r.actual_problematic %></td>
+                <td><%= formatPct(r.percentage_WI) %></td><td><%= formatPct(r.percentage_CR) %></td>
+                <td><%= formatPct(r.percentage_AP) %></td><td><%= formatPct(r.percentage_TOTAL) %></td>
+              </tr>
+              <% }); } else { %>
+              <tr><td colspan="10" class="text-muted text-center">Sin resultados.</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLA SOCIAL -->
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-default">
+        <div class="panel-heading" style="background-color:#fd95ff">
+          <strong>Puntuación de Obras Social</strong>
+        </div>
+        <div class="table-scroll">
+          <table class="table table-striped table-hover table-compact table-fixed" style="min-width:1000px;">
+            <thead>
+              <tr>
+                <th class="wrap">ID Puntuación</th><th class="wrap">ID Obra</th><th class="wrap">Nombre de Obra</th>
+                <th class="wrap">Necesidad del Servicio</th><th class="wrap">Riesgo Social</th><th class="wrap">Apoyo a la Marginación</th>
+                <th class="wrap">Necesidad %</th><th class="wrap">Riesgo %</th><th class="wrap">Apoyo %</th><th class="wrap">Total %</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (rowsSoc.length > 0) { rowsSoc.forEach(function(r) { %>
+              <tr>
+                <td><%= r.id_social %></td><td><%= r.id_work %></td><td class="wrap"><%= r.name_project || '' %></td>
+                <td><%= r.service_need %></td><td><%= r.social_risk %></td><td><%= r.marginal_support %></td>
+                <td><%= formatPct(r.percentage_SN) %></td><td><%= formatPct(r.percentage_SR) %></td>
+                <td><%= formatPct(r.percentage_MS) %></td><td><%= formatPct(r.percentage_TOTAL) %></td>
+              </tr>
+              <% }); } else { %>
+              <tr><td colspan="10" class="text-muted text-center">Sin resultados.</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLA POLÍTICO -->
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-default">
+        <div class="panel-heading" style="background-color:#ffbe75">
+          <strong>Puntuación de Obras Político</strong>
+        </div>
+        <div class="table-scroll">
+          <table class="table table-striped table-hover table-compact table-fixed" style="min-width:1000px;">
+            <thead>
+              <tr>
+                <th class="wrap">ID Puntuación</th><th class="wrap">ID Obra</th><th class="wrap">Nombre de Obra</th>
+                <th class="wrap">Impacto Político</th><th class="wrap">Compromiso</th>
+                <th class="wrap">Impacto %</th><th class="wrap">Compromiso %</th><th class="wrap">Total %</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (rowsPol.length > 0) { rowsPol.forEach(function(r) { %>
+              <tr>
+                <td><%= r.id_politic %></td><td><%= r.id_work %></td><td class="wrap"><%= r.name_project || '' %></td>
+                <td><%= r.politic_impact %></td><td><%= r.compromise %></td>
+                <td><%= formatPct(r.percentage_PI) %></td><td><%= formatPct(r.percentage_C) %></td>
+                <td><%= formatPct(r.percentage_TOTAL) %></td>
+              </tr>
+              <% }); } else { %>
+              <tr><td colspan="8" class="text-muted text-center">Sin resultados.</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLA AMBIENTAL -->
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-default">
+        <div class="panel-heading" style="background-color:#a1ff98">
+          <strong>Puntuación de Obras Ambiental</strong>
+        </div>
+        <div class="table-scroll">
+          <table class="table table-striped table-hover table-compact table-fixed" style="min-width:1000px;">
+            <thead>
+              <tr>
+                <th class="wrap">ID Puntuación</th><th class="wrap">ID Obra</th><th class="wrap">Nombre de Obra</th>
+                <th class="wrap">Beneficio Ambiental</th><th class="wrap">Riesgo a la Integridad a Corto Plazo</th>
+                <th class="wrap">Beneficio %</th><th class="wrap">Riesgo %</th><th class="wrap">Total %</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (rowsEnv.length > 0) { rowsEnv.forEach(function(r) { %>
+              <tr>
+                <td><%= r.id_environment %></td><td><%= r.id_work %></td><td class="wrap"><%= r.name_project || '' %></td>
+                <td><%= r.environment_benefit %></td><td><%= r.integrity_risk %></td>
+                <td><%= formatPct(r.percentage_EB) %></td><td><%= formatPct(r.percentage_IR) %></td>
+                <td><%= formatPct(r.percentage_TOTAL) %></td>
+              </tr>
+              <% }); } else { %>
+              <tr><td colspan="8" class="text-muted text-center">Sin resultados.</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLA JURÍDICO -->
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-default">
+        <div class="panel-heading" style="background-color:#fc8e75">
+          <strong>Puntuación de Obras Jurídico</strong>
+        </div>
+        <div class="table-scroll">
+          <table class="table table-striped table-hover table-compact table-fixed" style="min-width:1000px;">
+            <thead>
+              <tr>
+                <th class="wrap">ID Puntuación</th><th class="wrap">ID Obra</th><th class="wrap">Nombre de Obra</th>
+                <th class="wrap">Permisos</th><th class="wrap">Derechos de Paso</th>
+                <th class="wrap">Permisos %</th><th class="wrap">Derechos %</th><th class="wrap">Total %</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (rowsLeg.length > 0) { rowsLeg.forEach(function(r) { %>
+              <tr>
+                <td><%= r.id_legal %></td><td><%= r.id_work %></td><td class="wrap"><%= r.name_project || '' %></td>
+                <td><%= r.permissions %></td><td><%= r.pass_rights %></td>
+                <td><%= formatPct(r.percentage_P) %></td><td><%= formatPct(r.percentage_PR) %></td>
+                <td><%= formatPct(r.percentage_TOTAL) %></td>
+              </tr>
+              <% }); } else { %>
+              <tr><td colspan="8" class="text-muted text-center">Sin resultados.</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLA SOCIOECONÓMICO -->
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-default">
+        <div class="panel-heading" style="background-color:#ebfc2d">
+          <strong>Puntuación de Obras Socioeconómico</strong>
+        </div>
+        <div class="table-scroll">
+          <table class="table table-striped table-hover table-compact table-fixed" style="min-width:1000px;">
+            <thead>
+              <tr>
+                <th class="wrap">ID Puntuación</th><th class="wrap">ID Obra</th><th class="wrap">Nombre de Obra</th>
+                <th class="wrap">Población (Hab)</th><th class="wrap">Población (1–5)</th><th class="wrap">Valor (1–5)</th>
+                <th class="wrap">Inversión Per Cápita</th><th class="wrap">Categoría (1–5)</th>
+                <th class="wrap">Generación Ingresos (1–5)</th><th class="wrap">Crecimiento Poblacional (1–5)</th>
+                <th class="wrap">PH+P+V %</th><th class="wrap">I+C %</th><th class="wrap">IG %</th><th class="wrap">PG %</th><th class="wrap">Total %</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (rowsSe.length > 0) { rowsSe.forEach(function(r) { %>
+              <tr>
+                <td><%= r.id_socioeconomic %></td><td><%= r.id_work %></td><td class="wrap"><%= r.name_project || '' %></td>
+                <td><%= r.poblation_hab %></td><td><%= r.poblation %></td><td><%= r.value %></td>
+                <td><%= r.invertion %></td><td><%= r.category %></td>
+                <td><%= r.income_generation %></td><td><%= r.poblation_grow %></td>
+                <td><%= formatPct(r.percentage_PH_P_V) %></td><td><%= formatPct(r.percentage_I_C) %></td>
+                <td><%= formatPct(r.percentage_IG) %></td><td><%= formatPct(r.percentage_PG) %></td>
+                <td><%= formatPct(r.percentage_TOTAL) %></td>
+              </tr>
+              <% }); } else { %>
+              <tr><td colspan="15" class="text-muted text-center">Sin resultados.</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if (totalPages > 1) { %>
+  <nav>
+    <ul class="pagination">
+      <li class="<%= page <= 1 ? 'disabled' : '' %>">
+        <a href="?page=<%= Math.max(1, page - 1) %><%= qsBase %>">&laquo;</a>
+      </li>
+      <% for (var i = 1; i <= totalPages; i++) { %>
+        <li class="<%= page === i ? 'active' : '' %>">
+          <a href="?page=<%= i %><%= qsBase %>"><%= i %></a>
+        </li>
+      <% } %>
+      <li class="<%= page >= totalPages ? 'disabled' : '' %>">
+        <a href="?page=<%= Math.min(totalPages, page + 1) %><%= qsBase %>">&raquo;</a>
+      </li>
+    </ul>
+  </nav>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

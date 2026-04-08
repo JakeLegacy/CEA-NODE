@@ -1,0 +1,49 @@
+<%
+var adminLinks = [
+  { href: '/admin', label: 'Inicio', active: true },
+  { href: '/works/admin', label: 'Obras', active: false },
+  { href: '/scores/puntuacion', label: 'Puntuación de Obras', active: false },
+  { href: '/admin/panel', label: 'Admin-Panel', active: false }
+];
+%>
+<%- include('../partials/head', { title: 'Admin - Inicio', extraCss: ['general.css'], bodyClass: '' }) %>
+<%- include('../partials/navbar', { navHome: '/admin', navTitle: 'Sistema de Gestión de Obras Hídricas – INICIO ADMIN', navLinks: adminLinks }) %>
+
+<div class="container-narrow">
+  <div class="panel panel-default" style="margin-top:20px;">
+    <div class="panel-heading"><strong>Bienvenido(a)</strong></div>
+    <div class="panel-body">
+      <p class="lead" style="margin-bottom:15px;">Selecciona una opción para gestionar el sistema.</p>
+      <div class="row">
+        <div class="col-sm-6">
+          <a href="/works/register" class="btn btn-primary btn-lg btn-block">Registrar Obras</a>
+        </div>
+        <div class="col-sm-6">
+          <a href="/admin/panel" class="btn btn-info btn-lg btn-block">Gestión de Usuarios</a>
+        </div>
+        <div class="col-sm-6">
+          <a href="/admin/users/register" class="btn btn-success btn-lg btn-block">Registrar Usuario</a>
+        </div>
+        <div class="col-sm-6">
+          <a href="/scores/puntuacion" class="btn btn-warning btn-lg btn-block">Puntuación de Obras</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container welcome-container text-center">
+  <div class="row text-center">
+    <div class="col-sm-12">
+      <img src="/images/Gotin.png" class="img-responsive center-block" style="max-width:200px;">
+    </div>
+  </div>
+  <h1 style="font-size:42px;font-weight:800;text-align:center;background:linear-gradient(90deg,#003366,#005fa3);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1.5px;margin-bottom:20px;">
+    ¡Bienvenido al Sistema de Gestión de Obras Hídricas!
+  </h1>
+  <p style="font-size:20px;text-align:center;color:#444;max-width:800px;margin:0 auto;line-height:1.6;">
+    Gestiona y califica obras hídricas de manera eficiente, estratégica y transparente.
+  </p>
+</div>
+
+<%- include('../partials/footer') %>

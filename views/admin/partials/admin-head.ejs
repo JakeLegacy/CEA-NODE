@@ -1,0 +1,8 @@
+<% var adminLinks = [
+  { href: '/admin', label: 'Inicio', active: typeof activeNav !== 'undefined' && activeNav === 'inicio' },
+  { href: '/works/admin', label: 'Obras', active: typeof activeNav !== 'undefined' && activeNav === 'obras' },
+  { href: '/scores/puntuacion', label: 'Puntuación de Obras', active: typeof activeNav !== 'undefined' && activeNav === 'puntuacion' },
+  { href: '/admin/panel', label: 'Admin-Panel', active: typeof activeNav !== 'undefined' && activeNav === 'panel' }
+]; %>
+<%- include('../partials/head', { title: typeof title !== 'undefined' ? title : 'Admin', extraCss: typeof extraCss !== 'undefined' ? extraCss : ['general.css'], bodyClass: typeof bodyClass !== 'undefined' ? bodyClass : '' }) %>
+<%- include('../partials/navbar', { navHome: '/admin', navTitle: typeof navTitle !== 'undefined' ? navTitle : 'Sistema de Gestión de Obras Hídricas – ADMIN', navLinks: adminLinks }) %>

@@ -1,0 +1,38 @@
+<%- include('../partials/head', { title: 'Iniciar Sesión', extraCss: ['form.css'], bodyClass: '' }) %>
+
+<nav class="navbar navbar-default navbar-fixed-top" style="background-color:#58b7ff">
+  <div class="container text-center">
+    <a href="/" class="navbar-brand-center">
+      <img src="/images/LogoCEA.png" style="width:250px;height:70px" alt="CEA Querétaro">
+    </a>
+    <h1 class="navbar-title" style="color:#fff">Sistema de Gestión de Obras Hídricas</h1>
+    <ul class="nav nav-pills navbar-links">
+      <li class="active"><a href="/">Iniciar Sesión</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <div class="container" style="margin-top:120px">
+    <div class="FormLayout">
+      <div class="FormContainer">
+        <div class="form-box active" id="login-form">
+          <form action="/login" method="post">
+            <h2>Iniciar Sesión</h2>
+            <% if (loginError) { %>
+              <p class="error-message"><%= loginError %></p>
+            <% } %>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <button type="submit">Iniciar Sesión</button>
+          </form>
+        </div>
+      </div>
+      <div class="ImageSide">
+        <img src="/images/CEA_Pabellon.jpeg" alt="Sistema de Obras Hídricas">
+      </div>
+    </div>
+  </div>
+</main>
+
+<%- include('../partials/footer') %>

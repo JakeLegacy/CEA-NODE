@@ -1,0 +1,126 @@
+<%
+var adminLinks = [
+  { href: '/admin', label: 'Inicio', active: false },
+  { href: '/works/admin', label: 'Obras', active: true },
+  { href: '/scores/puntuacion', label: 'Puntuación de Obras', active: false },
+  { href: '/admin/panel', label: 'Admin-Panel', active: false }
+];
+%>
+<%- include('../partials/head', { title: 'Obras Registradas', extraCss: ['general.css'], bodyClass: '' }) %>
+<%- include('../partials/navbar', { navHome: '/admin', navTitle: 'Sistema de Gestión de Obras Hídricas – OBRAS ADMINISTRADAS', navLinks: adminLinks }) %>
+
+<div class="container" style="margin-top:130px;">
+  <%- include('../partials/flash') %>
+
+  <div class="panel panel-primary" style="max-width:1200px;margin:auto;">
+    <div class="panel-heading text-center">
+      <h3 class="panel-title">Administración de Obras</h3>
+    </div>
+    <div class="panel-body">
+      <div class="text-center" style="margin-bottom:20px;">
+        <a href="/works/admin" class="btn btn-default">Limpiar</a>
+        <a href="/works/register" class="btn btn-success">Registrar Obra</a>
+      </div>
+
+      <form method="get" class="input-group input-group-lg" style="margin-bottom:20px;">
+        <input type="text" name="q" class="form-control" placeholder="Buscar obra por nombre, municipio o programa" value="<%= search %>">
+        <span class="input-group-btn">
+          <button class="btn btn-primary" type="submit">
+            <span class="glyphicon glyphicon-search"></span> Buscar
+          </button>
+        </span>
+      </form>
+
+      <div style="max-height:500px;overflow-y:auto;">
+        <table class="table table-bordered table-striped table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Proyecto</th>
+              <th>Municipio</th>
+              <th>Programa</th>
+              <th>Usuario que Requiere</th>
+              <th>Memo Referencia</th>
+              <th>¿Cuenta con Proyecto?</th>
+              <th>Número de Expediente</th>
+              <th>Folio</th>
+              <th>Habitantes Beneficiados</th>
+              <th>Bloque</th>
+              <th>Subbloque</th>
+              <th>Costo (MDP)</th>
+              <th>Presupuesto (MDP)</th>
+              <th>Impacto</th>
+              <th>Diámetro Tubería</th>
+              <th style="width:180px;text-align:center;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (works.length > 0) { %>
+              <% works.forEach(function(obra) { %>
+                <tr>
+                  <td><%= obra.id_work %></td>
+                  <td><%= obra.name_project %></td>
+                  <td><%= obra.municipality %></td>
+                  <td><%= obra.program %></td>
+                  <td><%= obra.user_requires %></td>
+                  <td><%= obra.memo_reference %></td>
+                  <td><%= obra.counts_project %></td>
+                  <td><%= obra.expedient_no %></td>
+                  <td><%= obra.folio %></td>
+                  <td><%= obra.benefited_inhabitants %></td>
+                  <td><%= obra.block %></td>
+                  <td><%= obra.sub_block %></td>
+                  <td><%= obra.cost_MDP %></td>
+                  <td><%= obra.budget_MDP %></td>
+                  <td><%= obra.impact %></td>
+                  <td class="text-center">
+                    <% if (obra.diameter_tube) { %>
+                      <a href="/pdf/view/<%= obra.id_work %>" class="btn btn-info btn-sm" target="_blank">
+                        <span class="glyphicon glyphicon-file"></span> Ver PDF
+                      </a>
+                    <% } else { %>
+                      <span class="text-muted">Sin PDF</span>
+                    <% } %>
+                  </td>
+                  <td class="text-center">
+                    <a href="/works/edit/<%= obra.id_work %>" class="btn btn-warning btn-xs">
+                      <span class="glyphicon glyphicon-pencil"></span> Editar
+                    </a>
+                    <form method="post" action="/works/delete" onsubmit="return confirm('¿Eliminar obra?');" style="display:inline;">
+                      <input type="hidden" name="id" value="<%= obra.id_work %>">
+                      <button type="submit" class="btn btn-danger btn-xs">
+                        <span class="glyphicon glyphicon-trash"></span> Eliminar
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              <% }); %>
+            <% } else { %>
+              <tr><td colspan="17" class="text-muted text-center">Sin resultados.</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <% if (totalPages > 1) { %>
+  <div class="text-center">
+    <ul class="pagination">
+      <li class="<%= page <= 1 ? 'disabled' : '' %>">
+        <a href="?page=<%= Math.max(1, page - 1) %>&q=<%= encodeURIComponent(search) %>">&laquo;</a>
+      </li>
+      <% for (var i = 1; i <= totalPages; i++) { %>
+        <li class="<%= page === i ? 'active' : '' %>">
+          <a href="?page=<%= i %>&q=<%= encodeURIComponent(search) %>"><%= i %></a>
+        </li>
+      <% } %>
+      <li class="<%= page >= totalPages ? 'disabled' : '' %>">
+        <a href="?page=<%= Math.min(totalPages, page + 1) %>&q=<%= encodeURIComponent(search) %>">&raquo;</a>
+      </li>
+    </ul>
+  </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

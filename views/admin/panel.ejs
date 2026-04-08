@@ -1,0 +1,100 @@
+<%
+var adminLinks = [
+  { href: '/admin', label: 'Inicio', active: false },
+  { href: '/works/admin', label: 'Obras', active: false },
+  { href: '/scores/puntuacion', label: 'Puntuación de Obras', active: false },
+  { href: '/admin/panel', label: 'Admin-Panel', active: true }
+];
+%>
+<%- include('../partials/head', { title: 'Admin Panel', extraCss: ['general.css', 'table.css'], bodyClass: '' }) %>
+<%- include('../partials/navbar', { navHome: '/admin', navTitle: 'Sistema de Gestión de Obras Hídricas – ADMIN PANEL', navLinks: adminLinks }) %>
+
+<div class="container-narrow">
+  <%- include('../partials/flash') %>
+
+  <form method="get" class="toolbar">
+    <div class="row">
+      <div class="col-sm-7">
+        <div class="input-group input-group-lg">
+          <input type="text" name="q" class="form-control" placeholder="Buscar por email o rol" value="<%= search %>">
+          <span class="input-group-btn">
+            <button type="submit" class="btn btn-primary">
+              <span class="glyphicon glyphicon-search"></span> Buscar
+            </button>
+          </span>
+        </div>
+      </div>
+      <div class="col-sm-5 text-right" style="margin-top:8px;">
+        <a href="/admin/panel" class="btn btn-default btn-lg">Limpiar</a>
+        <a href="/admin/users/register" class="btn btn-success btn-lg">Registrar</a>
+      </div>
+    </div>
+  </form>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <strong>Usuarios</strong>
+      <span class="pull-right">Página <%= page %> de <%= Math.max(1, totalPages) %></span>
+    </div>
+    <div class="table-scroll">
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th style="width:80px;">ID de Usuario</th>
+            <th>Email</th>
+            <th style="width:140px;">Rol</th>
+            <th>Dirección</th>
+            <th style="width:210px;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (users.length > 0) { %>
+            <% users.forEach(function(u) { %>
+              <tr>
+                <td><%= u.id_user %></td>
+                <td><%= u.email %></td>
+                <td>
+                  <span class="label <%= u.role === 'admin' ? 'label-primary' : 'label-info' %>"><%= u.role %></span>
+                </td>
+                <td><%= u.direction || '' %></td>
+                <td class="table-actions">
+                  <a href="/admin/users/edit/<%= u.id_user %>" class="btn btn-warning btn-xs">
+                    <span class="glyphicon glyphicon-pencil"></span> Editar
+                  </a>
+                  <form method="post" action="/admin/users/delete" onsubmit="return confirm('¿Eliminar usuario?');" style="display:inline;">
+                    <input type="hidden" name="id_user" value="<%= u.id_user %>">
+                    <button type="submit" class="btn btn-danger btn-xs">
+                      <span class="glyphicon glyphicon-trash"></span> Eliminar
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+          <% } else { %>
+            <tr><td colspan="5" class="text-muted text-center">Sin resultados.</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <% if (totalPages > 1) { %>
+  <nav>
+    <ul class="pagination">
+      <li class="<%= page <= 1 ? 'disabled' : '' %>">
+        <a href="?page=<%= Math.max(1, page - 1) %>&q=<%= encodeURIComponent(search) %>">&laquo;</a>
+      </li>
+      <% for (var i = 1; i <= totalPages; i++) { %>
+        <li class="<%= page === i ? 'active' : '' %>">
+          <a href="?page=<%= i %>&q=<%= encodeURIComponent(search) %>"><%= i %></a>
+        </li>
+      <% } %>
+      <li class="<%= page >= totalPages ? 'disabled' : '' %>">
+        <a href="?page=<%= Math.min(totalPages, page + 1) %>&q=<%= encodeURIComponent(search) %>">&raquo;</a>
+      </li>
+    </ul>
+  </nav>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

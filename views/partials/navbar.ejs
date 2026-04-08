@@ -1,0 +1,14 @@
+<nav class="navbar navbar-default navbar-fixed-top" style="background-color:#58b7ff">
+  <div class="container text-center">
+    <a href="<%= navHome %>" class="navbar-brand-center">
+      <img src="/images/LogoCEA.png" style="width:250px;height:70px" alt="CEA Querétaro">
+    </a>
+    <h1 class="navbar-title" style="color:#fff"><%= navTitle %></h1>
+    <ul class="nav nav-pills navbar-links">
+      <li><a href="/logout">Cerrar Sesión</a></li>
+      <% navLinks.forEach(function(link) { %>
+        <li<% if (link.active) { %> class="active"<% } %>><a href="<%= link.href %>"><%= link.label %></a></li>
+      <% }); %>
+    </ul>
+  </div>
+</nav>

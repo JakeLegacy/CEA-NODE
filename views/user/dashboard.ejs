@@ -1,0 +1,38 @@
+<%
+var userLinks = [
+  { href: '/user', label: 'Inicio', active: true },
+  { href: '/user/works', label: 'Obras', active: false }
+];
+%>
+<%- include('../partials/head', { title: 'Inicio Usuario', extraCss: ['general.css', 'navbar.css'], bodyClass: '' }) %>
+<%- include('../partials/navbar', { navHome: '/user', navTitle: 'Sistema de Gestión de Obras Hídricas – INICIO USUARIO', navLinks: userLinks }) %>
+
+<div class="main-content">
+  <div class="container welcome-container text-center">
+    <%- include('../partials/flash') %>
+
+    <div class="row text-center">
+      <div class="col-sm-12">
+        <img src="/images/Gotin.png" class="img-responsive center-block" style="max-width:200px;">
+      </div>
+    </div>
+
+    <h1 style="font-size:42px;font-weight:800;text-align:center;background:linear-gradient(90deg,#003366,#005fa3);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1.5px;margin-bottom:20px;text-shadow:2px 2px 8px rgba(0,0,0,0.15);">
+      ¡Bienvenido al Sistema de Gestión de Obras Hídricas!
+    </h1>
+
+    <p style="font-size:20px;text-align:center;color:#444;max-width:700px;margin:0 auto 30px auto;line-height:1.6;">
+      Aquí podrás consultar y calificar las obras registradas según tu dirección.
+    </p>
+
+    <div class="row" style="margin-top:30px;">
+      <div class="col-sm-6 col-sm-offset-3">
+        <a href="/user/works" class="btn btn-primary btn-lg btn-block" style="background-color:#58b7ff;border-color:#2c9bdb;padding:15px;">
+          <span class="glyphicon glyphicon-list-alt"></span> Ver Obras
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

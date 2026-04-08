@@ -1,0 +1,266 @@
+<%
+var adminLinks = [
+  { href: '/admin', label: 'Inicio', active: false },
+  { href: '/works/admin', label: 'Obras', active: false },
+  { href: '/scores/puntuacion', label: 'Puntuación de Obras', active: true },
+  { href: '/admin/panel', label: 'Admin-Panel', active: false }
+];
+var s = scores || {};
+%>
+<%- include('../partials/head', { title: 'Editar Calificaciones', extraCss: ['obrasadmin.css'], bodyClass: 'obras-admin' }) %>
+<%- include('../partials/navbar', { navHome: '/admin', navTitle: 'Sistema de Gestión de Obras Hídricas – EDITAR CALIFICACIONES', navLinks: adminLinks }) %>
+
+<style>
+  .form-section { background-color:#f9f9f9; border:1px solid #ddd; border-radius:5px; padding:20px; margin-bottom:20px; }
+  .form-section h3 { margin-top:0; border-bottom:3px solid; padding-bottom:10px; }
+  .tecnic-header { border-color:#58b7ff; color:#58b7ff; }
+  .social-header { border-color:#fd95ff; color:#fd95ff; }
+  .politic-header { border-color:#ffbe75; color:#ffbe75; }
+  .environment-header { border-color:#a1ff98; color:#a1ff98; }
+  .legal-header { border-color:#fc8e75; color:#fc8e75; }
+  .socioeconomic-header { border-color:#ebfc2d; color:#ebfc2d; }
+</style>
+
+<div class="container-narrow" style="margin-top:120px;">
+  <%- include('../partials/flash') %>
+
+  <div class="panel panel-default" style="margin-bottom:25px;">
+    <div class="panel-heading" style="background-color:#58b7ff;color:white;">
+      <strong>Seleccionar Obra para Editar</strong>
+    </div>
+    <div class="panel-body">
+      <form method="get" id="workForm">
+        <div class="form-group" style="margin-bottom:15px;">
+          <label>Buscar Obra:</label>
+          <div class="input-group input-group-lg">
+            <input type="text" id="search_work" class="form-control" placeholder="Buscar por ID o nombre de obra...">
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-primary" id="btnSearch">
+                <span class="glyphicon glyphicon-search"></span> Buscar
+              </button>
+            </span>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Seleccionar Obra:</label>
+          <select name="id_work" id="id_work" class="form-control" style="min-height:40px;">
+            <option value="">-- Selecciona una obra --</option>
+            <% works.forEach(function(w) { %>
+              <option value="<%= w.id_work %>" <%= idWork === w.id_work ? 'selected' : '' %> data-name="<%= w.name_project %>">
+                ID <%= w.id_work %> – <%= w.name_project %>
+              </option>
+            <% }); %>
+          </select>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <% if (idWork > 0 && workName) { %>
+    <div class="alert alert-info">
+      <strong>Editando calificaciones para:</strong> <%= workName %> (ID: <%= idWork %>)
+    </div>
+
+    <form method="post" action="/scores/editar-calificacion?id_work=<%= idWork %>">
+
+      <% if (s.tecnic) { %>
+      <div class="form-section">
+        <h3 class="tecnic-header">Calificación Técnica</h3>
+        <input type="hidden" name="tecnic_update" value="1">
+        <input type="hidden" name="id_tecnic" value="<%= s.tecnic.id_tecnic %>">
+        <div class="row">
+          <div class="col-sm-6"><div class="form-group"><label>Importancia de la Obra</label><input type="text" name="work_importance" class="form-control" value="<%= s.tecnic.work_importance || '' %>"></div></div>
+          <div class="col-sm-6"><div class="form-group"><label>Importancia %</label><input type="number" name="percentage_WI" class="form-control" step="0.01" min="0" max="100" value="<%= parseFloat(s.tecnic.percentage_WI || 0).toFixed(2) %>"></div></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6"><div class="form-group"><label>Caudal Recuperado</label><input type="text" name="caudal_recover" class="form-control" value="<%= s.tecnic.caudal_recover || '' %>"></div></div>
+          <div class="col-sm-6"><div class="form-group"><label>Caudal %</label><input type="number" name="percentage_CR" class="form-control" step="0.01" min="0" max="100" value="<%= parseFloat(s.tecnic.percentage_CR || 0).toFixed(2) %>"></div></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6"><div class="form-group"><label>Problemática Actual</label><input type="text" name="actual_problematic" class="form-control" value="<%= s.tecnic.actual_problematic || '' %>"></div></div>
+          <div class="col-sm-6"><div class="form-group"><label>Problemática %</label><input type="number" name="percentage_AP" class="form-control" step="0.01" min="0" max="100" value="<%= parseFloat(s.tecnic.percentage_AP || 0).toFixed(2) %>"></div></div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg" style="background-color:#58b7ff;border-color:#2c9bdb;">
+          <span class="glyphicon glyphicon-floppy-disk"></span> Guardar Técnico
+        </button>
+      </div>
+      <% } else { %>
+      <div class="alert alert-warning"><strong>Sin calificación técnica.</strong></div>
+      <% } %>
+
+      <% if (s.social) { %>
+      <div class="form-section">
+        <h3 class="social-header">Calificación Social</h3>
+        <input type="hidden" name="social_update" value="1">
+        <input type="hidden" name="id_social" value="<%= s.social.id_social %>">
+        <div class="row">
+          <div class="col-sm-6"><div class="form-group"><label>Necesidad del Servicio</label><input type="text" name="service_need" class="form-control" value="<%= s.social.service_need || '' %>"></div></div>
+          <div class="col-sm-6"><div class="form-group"><label>Necesidad %</label><input type="number" name="percentage_SN" class="form-control" step="0.01" min="0" max="100" value="<%= parseFloat(s.social.percentage_SN || 0).toFixed(2) %>"></div></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6"><div class="form-group"><label>Riesgo Social</label><input type="text" name="social_risk" class="form-control" value="<%= s.social.social_risk || '' %>"></div></div>
+          <div class="col-sm-6"><div class="form-group"><label>Riesgo %</label><input type="number" name="percentage_SR" class="form-control" step="0.01" min="0" max="100" value="<%= parseFloat(s.social.percentage_SR || 0).toFixed(2) %>"></div></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6"><div class="form-group"><label>Apoyo a la Marginación</label><input type="text" name="marginal_support" class="form-control" value="<%= s.social.marginal_support || '' %>"></div></div>
+          <div class="col-sm-6"><div class="form-group"><label>Apoyo %</label><input type="number" name="percentage_MS" class="form-control" step="0.01" min="0" max="100" value="<%= parseFloat(s.social.percentage_MS || 0).toFixed(2) %>"></div></div>
+        </div>
+        <button type="submit" class="btn btn-lg" style="background-color:#fd95ff;border-color:#ff6bd9;color:white;">
+          <span class="glyphicon glyphicon-floppy-disk"></span> Guardar Social
+        </button>
+      </div>
+      <% } else { %>
+      <div class="alert alert-warning"><strong>Sin calificación social.</strong></div>
+      <% } %>
+
+      <% if (s.politic) { %>
+      <div class="form-section">
+        <h3 class="politic-header">Calificación Política</h3>
+        <input type="hidden" name="politic_update" value="1">
+        <input type="hidden" name="id_politic" value="<%= s.politic.id_politic %>">
+        <div class="row">
+          <div class="col-sm-6"><div class="form-group"><label>Impacto Político</label><input type="text" name="politic_impact" class="form-control" value="<%= s.politic.politic_impact || '' %>"></div></div>
+          <div class="col-sm-6"><div class="form-group"><label>Impacto %</label><input type="number" name="percentage_PI" class="form-control" step="0.01" min="0" max="100" value="<%= parseFloat(s.politic.percentage_PI || 0).toFixed(2) %>"></div></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6"><div class="form-group"><label>Compromiso</label><input type="text" name="compromise" class="form-control" value="<%= s.politic.compromise || '' %>"></div></div>
+          <div class="col-sm-6"><div class="form-group"><label>Compromiso %</label><input type="number" name="percentage_C" class="form-control" step="0.01" min="0" max="100" value="<%= parseFloat(s.politic.percentage_C || 0).toFixed(2) %>"></div></div>
+        </div>
+        <button type="submit" class="btn btn-lg" style="background-color:#ffbe75;border-color:#ffa940;color:white;">
+          <span class="glyphicon glyphicon-floppy-disk"></span> Guardar Político
+        </button>
+      </div>
+      <% } else { %>
+      <div class="alert alert-warning"><strong>Sin calificación política.</strong></div>
+      <% } %>
+
+      <% if (s.environment) { %>
+      <div class="form-section">
+        <h3 class="environment-header">Calificación Ambiental</h3>
+        <input type="hidden" name="environment_update" value="1">
+        <input type="hidden" name="id_environment" value="<%= s.environment.id_environment %>">
+        <div class="row">
+          <div class="col-sm-6"><div class="form-group"><label>Beneficio Ambiental</label><input type="text" name="environment_benefit" class="form-control" value="<%= s.environment.environment_benefit || '' %>"></div></div>
+          <div class="col-sm-6"><div class="form-group"><label>Beneficio %</label><input type="number" name="percentage_EB" class="form-control" step="0.01" min="0" max="100" value="<%= parseFloat(s.environment.percentage_EB || 0).toFixed(2) %>"></div></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6"><div class="form-group"><label>Riesgo a la Integridad</label><input type="text" name="integrity_risk" class="form-control" value="<%= s.environment.integrity_risk || '' %>"></div></div>
+          <div class="col-sm-6"><div class="form-group"><label>Riesgo %</label><input type="number" name="percentage_IR" class="form-control" step="0.01" min="0" max="100" value="<%= parseFloat(s.environment.percentage_IR || 0).toFixed(2) %>"></div></div>
+        </div>
+        <button type="submit" class="btn btn-lg" style="background-color:#a1ff98;border-color:#7ad971;color:white;">
+          <span class="glyphicon glyphicon-floppy-disk"></span> Guardar Ambiental
+        </button>
+      </div>
+      <% } else { %>
+      <div class="alert alert-warning"><strong>Sin calificación ambiental.</strong></div>
+      <% } %>
+
+      <% if (s.legal) { %>
+      <div class="form-section">
+        <h3 class="legal-header">Calificación Jurídica</h3>
+        <input type="hidden" name="legal_update" value="1">
+        <input type="hidden" name="id_legal" value="<%= s.legal.id_legal %>">
+        <div class="row">
+          <div class="col-sm-6"><div class="form-group"><label>Permisos</label><input type="text" name="permissions" class="form-control" value="<%= s.legal.permissions || '' %>"></div></div>
+          <div class="col-sm-6"><div class="form-group"><label>Permisos %</label><input type="number" name="percentage_P" class="form-control" step="0.01" min="0" max="100" value="<%= parseFloat(s.legal.percentage_P || 0).toFixed(2) %>"></div></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6"><div class="form-group"><label>Derechos de Paso</label><input type="text" name="pass_rights" class="form-control" value="<%= s.legal.pass_rights || '' %>"></div></div>
+          <div class="col-sm-6"><div class="form-group"><label>Derechos %</label><input type="number" name="percentage_PR" class="form-control" step="0.01" min="0" max="100" value="<%= parseFloat(s.legal.percentage_PR || 0).toFixed(2) %>"></div></div>
+        </div>
+        <button type="submit" class="btn btn-lg" style="background-color:#fc8e75;border-color:#ff6b49;color:white;">
+          <span class="glyphicon glyphicon-floppy-disk"></span> Guardar Jurídico
+        </button>
+      </div>
+      <% } else { %>
+      <div class="alert alert-warning"><strong>Sin calificación jurídica.</strong></div>
+      <% } %>
+
+      <% if (s.socioeconomic) { %>
+      <div class="form-section">
+        <h3 class="socioeconomic-header">Calificación Socioeconómica</h3>
+        <input type="hidden" name="socioeconomic_update" value="1">
+        <input type="hidden" name="id_socioeconomic" value="<%= s.socioeconomic.id_socioeconomic %>">
+        <div class="row">
+          <div class="col-sm-6"><div class="form-group"><label>Población (Habitantes)</label><input type="text" name="poblation_hab" class="form-control" value="<%= s.socioeconomic.poblation_hab || '' %>"></div></div>
+          <div class="col-sm-6"><div class="form-group"><label>Población (1–5)</label><input type="text" name="poblation" class="form-control" value="<%= s.socioeconomic.poblation || '' %>"></div></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6"><div class="form-group"><label>Valor (1–5)</label><input type="text" name="value" class="form-control" value="<%= s.socioeconomic.value || '' %>"></div></div>
+          <div class="col-sm-6"><div class="form-group"><label>Inversión Per Cápita</label><input type="text" name="invertion" class="form-control" value="<%= s.socioeconomic.invertion || '' %>"></div></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6"><div class="form-group"><label>Categoría (1–5)</label><input type="text" name="category" class="form-control" value="<%= s.socioeconomic.category || '' %>"></div></div>
+          <div class="col-sm-6"><div class="form-group"><label>Generación de Ingresos (1–5)</label><input type="text" name="income_generation" class="form-control" value="<%= s.socioeconomic.income_generation || '' %>"></div></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6"><div class="form-group"><label>Crecimiento Poblacional (1–5)</label><input type="text" name="poblation_grow" class="form-control" value="<%= s.socioeconomic.poblation_grow || '' %>"></div></div>
+        </div>
+        <h4 style="margin-top:20px;border-top:1px solid #ddd;padding-top:15px;">Porcentajes</h4>
+        <div class="row">
+          <div class="col-sm-6"><div class="form-group"><label>PH+P+V %</label><input type="number" name="percentage_PH_P_V" class="form-control" step="0.01" min="0" max="100" value="<%= parseFloat(s.socioeconomic.percentage_PH_P_V || 0).toFixed(2) %>"></div></div>
+          <div class="col-sm-6"><div class="form-group"><label>I+C %</label><input type="number" name="percentage_I_C" class="form-control" step="0.01" min="0" max="100" value="<%= parseFloat(s.socioeconomic.percentage_I_C || 0).toFixed(2) %>"></div></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-6"><div class="form-group"><label>IG %</label><input type="number" name="percentage_IG" class="form-control" step="0.01" min="0" max="100" value="<%= parseFloat(s.socioeconomic.percentage_IG || 0).toFixed(2) %>"></div></div>
+          <div class="col-sm-6"><div class="form-group"><label>PG %</label><input type="number" name="percentage_PG" class="form-control" step="0.01" min="0" max="100" value="<%= parseFloat(s.socioeconomic.percentage_PG || 0).toFixed(2) %>"></div></div>
+        </div>
+        <button type="submit" class="btn btn-lg" style="background-color:#ebfc2d;border-color:#d4e809;color:#333;">
+          <span class="glyphicon glyphicon-floppy-disk"></span> Guardar Socioeconómico
+        </button>
+      </div>
+      <% } else { %>
+      <div class="alert alert-warning"><strong>Sin calificación socioeconómica.</strong></div>
+      <% } %>
+
+    </form>
+
+    <div style="text-align:center;margin-top:30px;">
+      <a href="/scores/puntuacion" class="btn btn-default btn-lg">
+        <span class="glyphicon glyphicon-arrow-left"></span> Volver a Puntuación
+      </a>
+    </div>
+
+  <% } else { %>
+    <div class="alert alert-info text-center" style="margin-top:30px;">
+      <p><strong>Selecciona una obra arriba para comenzar a editar sus calificaciones.</strong></p>
+    </div>
+  <% } %>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var searchInput = document.getElementById('search_work');
+  var btnSearch = document.getElementById('btnSearch');
+  var selectWork = document.getElementById('id_work');
+  var allOptions = Array.from(selectWork.options).slice(1);
+
+  if (searchInput && btnSearch) {
+    btnSearch.addEventListener('click', function(e) {
+      e.preventDefault();
+      var query = searchInput.value.toLowerCase().trim();
+      while (selectWork.options.length > 1) selectWork.remove(1);
+      if (query === '') {
+        allOptions.forEach(function(opt) { selectWork.appendChild(opt.cloneNode(true)); });
+      } else {
+        var filtered = allOptions.filter(function(opt) {
+          return opt.value.includes(query) || (opt.dataset.name || '').toLowerCase().includes(query);
+        });
+        if (filtered.length === 0) {
+          var noR = document.createElement('option');
+          noR.textContent = '-- No hay resultados --';
+          selectWork.appendChild(noR);
+        } else {
+          filtered.forEach(function(opt) { selectWork.appendChild(opt.cloneNode(true)); });
+        }
+      }
+    });
+
+    selectWork.addEventListener('change', function() {
+      if (this.value) window.location.href = '/scores/editar-calificacion?id_work=' + this.value;
+    });
+  }
+});
+</script>
+
+<%- include('../partials/footer') %>
